@@ -22,12 +22,17 @@ model.load_state_dict(torch.load("model.pth"))
 model.eval()
 
 
-img = Image.open("ffd73dc5-8b5b-4d7b-b44d-640ae3489190___FREC_C.Rust 9944.JPG").convert("RGB")
+img = Image.open("ff0f9b3a-4ef4-4c38-9a23-516beff99192___JR_FrgE.S 3048.JPG").convert("RGB")
 img = transform(img)
 img = img.unsqueeze(0)
 with torch.no_grad():
     outputs = model(img)
 _, predicted = torch.max(outputs, 1)
 predicted_class = predicted.item()
-classes = ['Healthy', 'Blight', 'Rust', 'Scab', 'Spot']  # example
-print(classes[predicted_class])
+class_map = {
+    0: 'Scab',
+    1: 'Black_rot',
+    2: 'Rust',
+    3: 'Healthy'
+}
+print(class_map[predicted_class])

@@ -10,12 +10,7 @@ from pytorch_grad_cam.utils.image import show_cam_on_image
 
 
 
-classes = { 
-    0: 'Scab',
-    1: 'Black_rot',
-    2: 'Rust',
-    3: 'Healthy'
-    }
+classes = ['Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 'Apple___healthy', 'Tomato___Bacterial_spot', 'Tomato___Early_blight', 'Tomato___Late_blight', 'Tomato___Leaf_Mold', 'Tomato___healthy']
 
 model = models.resnet18(weights=None)
 model.fc = nn.Linear(model.fc.in_features, len(classes))
@@ -30,8 +25,7 @@ transform = transforms.Compose([
 ])
 
 
-image_path = "Healthy2.JPG"
-
+image_path = "WhatsApp Image 2026-08-07 at 2.59.11 PM.jpeg"
 image = Image.open(image_path).convert("RGB")
 image = image.resize((224, 224))
 

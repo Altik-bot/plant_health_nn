@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 
-import sampleLeaf from "../assets/sample-leaf.jpg";
 import sampleGradcam from "../assets/sample-gradcam.jpg";
 
 const API_DOCS_URL = "https://triage-kiln-savage.ngrok-free.dev/docs";
@@ -256,22 +255,12 @@ function Index() {
                     className="h-full w-full object-contain"
                   />
                 ) : (
-                  <img
-                    src={sampleLeaf}
-                    alt="Example diseased leaf specimen"
-                    width={1024}
-                    height={1024}
-                    loading="lazy"
-                    className="h-full w-full object-cover opacity-25"
-                  />
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
+                    Drop_Or_Select_Image
+                  </span>
                 )}
                 {loading && (
                   <div className="animate-scan absolute inset-0 z-10 border-b border-accent/30 bg-accent/5" />
-                )}
-                {!previewUrl && (
-                  <span className="absolute font-mono text-[10px] uppercase tracking-widest text-muted">
-                    Drop_Or_Select_Image
-                  </span>
                 )}
               </div>
               <div className="absolute inset-0 flex items-center justify-center bg-background/80 opacity-0 transition-opacity group-hover:opacity-100">

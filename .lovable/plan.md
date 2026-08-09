@@ -6,7 +6,7 @@ A single page at `/` that lets you upload a leaf image, send it to your model AP
 
 Confirmed from your live API: it exposes exactly one endpoint, `POST /predict`, accepting `multipart/form-data` with a single `file` field.
 
-- Base URL used exactly as given: `https://triage-kiln-savage.ngrok-free.dev`
+- Base URL used exactly as given: `https://triage-kiln-savage.ngrok-free.dev/docs`
 - Predict call: `POST /predict` with `FormData { file }`
 - The header link "API Documentation" points to `/docs`
 - Requests include `ngrok-skip-browser-warning: true` so the free ngrok tunnel returns JSON instead of its interstitial page

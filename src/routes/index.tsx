@@ -374,7 +374,10 @@ function Index() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-muted">No ranked probabilities in response.</p>
+                  <p className="text-muted">
+                    {result ? "No ranked probabilities in response." : "Awaiting prediction."}
+                  </p>
+
                 )}
               </div>
             </div>

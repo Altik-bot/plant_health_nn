@@ -76,8 +76,9 @@
   --primary-foreground: oklch(0.992 0 0);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.223 0.045 264.1);
-  --muted: oklch(0.968 0.007 247.896);
+  --muted: oklch(0.554 0.046 257.417);
   --muted-foreground: oklch(0.554 0.046 257.417);
+
   --accent: oklch(0.696 0.149 162.5);
   --accent-foreground: oklch(0.992 0 0);
   --destructive: oklch(0.577 0.245 27.325);
@@ -146,3 +147,32 @@
     color: var(--color-foreground);
   }
 }
+
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes reveal-fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-scan {
+  animation: scan 2s linear infinite;
+}
+
+@utility animate-reveal {
+  animation: reveal-fade 0.4s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+

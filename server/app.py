@@ -1,37 +1,22 @@
-from fastapi import FastAPI, UploadFile, File
-import torch
-from torchvision import transforms
-from PIL import Image
-import io
-import torchvision.models as models
-import torch.nn as nn
-import torch
 
-model = models.resnet18(pretrained=False)
-app = FastAPI()
-model.fc = nn.Linear(model.fc.in_features, 4)
-
-state_dict = torch.load("../model/model.pth", map_location="cpu")
-model.load_state_dict(state_dict)
-
-model.eval()
-
+# Image transform
 transform = transforms.Compose([
-    transforms.Resize((224,224)),
+    transforms.Resize((224, 224)),
     transforms.ToTensor()
 ])
 
-classes  = {
-    0: 'Scab',
-    1: 'Black_rot',
-    2: 'Rust',
-    3: 'Healthy'
-}
+# Health endpoint
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     image_bytes = await file.read()
 
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    image_resized = image.resize((224, 224))
+
     input_tensor = transform(image).unsqueeze(0)
 
     with torch.no_grad():
@@ -39,7 +24,18 @@ async def predict(file: UploadFile = File(...)):
         probs = torch.softmax(outputs, dim=1)
         confidence, predicted = torch.max(probs, 1)
 
-    return {
-        "class": classes[predicted.item()],
-        "confidence": float(confidence.item())
-    }
+    predicted_class = predicted.item()
+
+    # Prepare image for Grad-CAM
+    rgb_image = np.array(image_resized).astype(np.float32) / 255.0
+
+    targets = [ClassifierOutputTarget(predicted_class)]
+
+    grayscale_cam = cam(
+        input_tensor=input_tensor,
+        targets=targets
+    )[0]
+
+    visualization = show_cam_on_image(
+        rgb_image,
+"app.py" 103L, 2478B                                                                                                                                       70,0-1        77%

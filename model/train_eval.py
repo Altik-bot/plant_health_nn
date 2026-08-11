@@ -4,6 +4,7 @@ from torchvision import models
 from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
 import time
+import csv
 
 from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
 
@@ -41,12 +42,13 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1)
 for param in model.parameters():
     param.requires_grad = True
 num_epochs = 10
+result = {}
 for epoch in range(num_epochs):
     model.train()
     running_loss = 0
     correct = 0
     total = 0
-
+     
     for images, labels in train_loader:
         outputs = model(images)
         loss = criterion(outputs, labels)
@@ -62,7 +64,8 @@ for epoch in range(num_epochs):
         correct += (predicted == labels).sum().item()
     train_accuracy = 100*( correct / total ) 
     arr_accuracy.append(train_accuracy)
-    torch.save(model.state_dict(), "model.pth")
+    result[epoch] = train_accuracy
+
 
     print(f"Epoch {epoch} done, Loss: {running_loss}, Train accuracy: {train_accuracy}")
 scheduler.step()
@@ -107,11 +110,22 @@ plt.ylabel("Actual")
 plt.show()   
 plt.title("Accuracy")   
 plt.plot(arr_accuracy)
-plt.show
+plt.show()
 plt.title("Latency")
 plt.plot(latency)
 plt.show()
+result["model"] = "resnet18"
+result["Accuracy"] = accuracy
+result["Precision"] = precision
+result["Recall"] = recall
+result["F1"] = f1
 print(f"Accuracy: {accuracy}")
 print(f"Precision: {precision}")
 print(f"Recall: {recall}")
 print(f"F1 Score: {f1}")
+def writedown(results):
+    with open("results.csv",mode = 'w')as f :
+        a = csv.writer(f,delimiter = ",")
+        for k in results.keys():
+            a.writerow([k,results[k]])
+writedown(result)

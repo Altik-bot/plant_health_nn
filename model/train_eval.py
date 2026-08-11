@@ -3,6 +3,7 @@ import torch.nn as nn
 from torchvision import models
 from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
+import time
 
 from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
 
@@ -30,7 +31,8 @@ train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=32, shuffle=False)
 
 print(train_data.classes)
-
+latency = []
+arr_accuracy = []
 num_classes = len(train_data.classes)
 model.fc = nn.Linear(model.fc.in_features, num_classes)
 criterion = nn.CrossEntropyLoss()
@@ -59,6 +61,7 @@ for epoch in range(num_epochs):
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
     train_accuracy = 100*( correct / total ) 
+    arr_accuracy.append(train_accuracy)
     torch.save(model.state_dict(), "model.pth")
 
     print(f"Epoch {epoch} done, Loss: {running_loss}, Train accuracy: {train_accuracy}")
@@ -69,17 +72,21 @@ all_labels = []
 
 correct = 0
 total = 0
-
+val_loss = 0
 with torch.no_grad():
     for images, labels in val_loader:
+        start = time.time()
         outputs = model(images)
+        end  = time.time()
+        latency.append(end - start)
+        print(f"Latency: {end - start}s")
 
         _, predicted = torch.max(outputs, 1)
 
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
         loss = criterion(outputs, labels)
-        running_loss += loss.item()
+        val_loss += loss.item()
 
         all_preds.extend(predicted.cpu().numpy())
         all_labels.extend(labels.cpu().numpy())
@@ -98,6 +105,12 @@ plt.colorbar()
 plt.xlabel("Predicted")
 plt.ylabel("Actual")
 plt.show()   
+plt.title("Accuracy")   
+plt.plot(arr_accuracy)
+plt.show
+plt.title("Latency")
+plt.plot(latency)
+plt.show()
 print(f"Accuracy: {accuracy}")
 print(f"Precision: {precision}")
 print(f"Recall: {recall}")
